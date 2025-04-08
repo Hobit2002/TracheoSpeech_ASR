@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check annotations</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <video autoplay muted loop id="backgroundVideo" class="backgroundVideo">
+        <source src="space_background.mp4" type="video/mp4">
+    </video>
+
+    <div id="overlay">
+        <div id="passcode-div">
+            <h2>Enter Passcode</h2>
+            <input type="password" id="passcode" placeholder="Passcode">
+            <button id="submitPassword">Submit</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="lineCounter" class="lineCounter"></div>
+        <button id="startButton" class="btn">START</button>
+        <div id="textDisplay" contenteditable="true" class="text-display"></div>
+        <div class="controls">
+            <button id="prevButton" class="btn">Previous</button>
+            <button id="replayButton" class="btn">Replay</button>
+            <button id="nextButton" class="btn">Next</button>
+            <button id="markButton" class="btn">Mark as Irrelevant</button>
+        </div>
+        <button id="downloadButton" class="btn">Download Updated CSV</button>
+        <audio id="audioPlayer"></audio>
+    </div>
+    <script src="script.js"  preload="auto"></script>
+</body>
+</html>
