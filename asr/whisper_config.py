@@ -4,6 +4,7 @@ import torch
 ### SET GLOBAL VARIABLES
 ANNOTATIONS_PATH = os.path.join(os.getcwd(),"data/TracheoSpeech/metadata.csv")
 PATIENT_AUDIO_DIR = os.path.join(os.getcwd(),"data/TracheoSpeech/sessions")
+PATIENT_SEGMENTED_AUDIO_DIR = os.path.join(os.getcwd(),"data/TracheoSpeech/samples")
 REGULAR_SPEECH_DIR = os.path.join(os.getcwd(),"data/regular_speech")
 QUASI_TRACHEO_DIR = os.path.join(os.getcwd(),"data/quasi_tracheo")
 SAMPLE_RATE = 16000

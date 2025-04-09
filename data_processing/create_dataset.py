@@ -4,7 +4,6 @@ from data_processing.clean_annotations import process_csv
 from IPython.display import clear_output, display
 import csv, os, sys
 from tqdm import tqdm
-from data_processing.premerge_api import *
 # Auto-completion input libraries
 import ipywidgets as widgets
 import time  
