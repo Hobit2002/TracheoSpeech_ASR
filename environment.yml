@@ -1,0 +1,31 @@
+name: TracheoSpeech_ASR
+channels:
+  - defaults
+dependencies:
+  - pip
+  - python=3.11
+  - ffmpeg
+  - pip:
+    - numpy
+    - torch
+    - torchaudio
+    - torchvision
+    - librosa
+    - pydub
+    - soundfile
+    - jiwer
+    - wandb
+    - pyworld
+    - matplotlib
+    - pytorch-lightning
+    - transformers
+    - openai-whisper
+    - evaluate
+    - gtts
+    - openai
+    - tqdm
+    - scikit-image
+    - scikit-learn
+    - scipy
+    - pandas
+    - matplotlib
