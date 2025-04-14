@@ -5,7 +5,6 @@ from IPython.display import clear_output, display
 import csv, os, sys
 from tqdm import tqdm
 # Auto-completion input libraries
-import ipywidgets as widgets
 import time  
 
 def tokenize_text(file_name):
