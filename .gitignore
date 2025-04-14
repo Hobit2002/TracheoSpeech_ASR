@@ -1,0 +1,7 @@
+data/pickled/**
+data/raw/**
+data/text/**
+
+**.ckpt
+**.pth
+artifacts/checkpoint/**

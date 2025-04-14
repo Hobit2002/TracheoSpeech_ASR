@@ -18,7 +18,7 @@ seed_everything(SEED, workers=True)
 # Get Configuration
 parser = argparse.ArgumentParser(
                     prog='train_whisper',
-                    description='This model trains Whisper of the specified configuration',
+                    description='This program trains Whisper of the specified configuration',
                     )
 parser.add_argument('model_configuration') 
 args = parser.parse_args()
@@ -30,7 +30,7 @@ config_dict = {
     "base_baseline_patient":BaseBaselinePatientConfig, "base_adapted_regular":BaseAdaptedRegularConfig,
     "base_adapted_quasi_tracheo":BaseAdaptedQuasiTracheoConfig,"base_adapted_quasi_patient": BaseAdaptedPatientConfig,
     "small_adapted_regular": SmallAdaptedRegularConfig, "small_adapted_quasi_tracheo":SmallAdaptedQuasiTracheoConfig,
-    "small_adapted_patient_tracheo":SmallAdaptedPatientConfig
+    "small_adapted_patient":SmallAdaptedPatientConfig
 
 }
 

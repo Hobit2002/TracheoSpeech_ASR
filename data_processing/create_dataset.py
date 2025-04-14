@@ -153,7 +153,6 @@ class LabelingProcedure():
             play(self.audio[self.audio_tokens[self.at][0]:self.audio_tokens[self.at][1]])
             return input(prompt_text)
 
-
 def save_labels(path, commited_pairs):
     try:
         # Open the CSV file in write mode

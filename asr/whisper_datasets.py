@@ -9,6 +9,7 @@ from whisper_config import *
 import pandas as pd
 from tqdm import tqdm
 from augmentations import insert_silence
+from pydub import AudioSegment
 
 loaded_audios = {}
 
@@ -40,6 +41,57 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
         return len(self.audio_info_list)
 
     def __getitem__(self, id):
+        extend_condition = lambda filename: int("".join(ch for ch in str(filename)[:-4] if ch.isnumeric())) < 24
+        audio_path, temporal_coordinates, text = self.audio_info_list[id]
+
+        npz_path = os.path.join(os.getcwd(), f"data/compressed/{len(self)}_{id}.npz")
+        if not os.path.isfile(npz_path):
+            if extend_condition(audio_path):
+                look_ahead = 2
+                while temporal_coordinates[1] - temporal_coordinates[0] < 5000:
+                    try_id = ((-1) ** (look_ahead % 2)) * look_ahead // 2 
+                    try_path, try_coords, try_text = self.audio_info_list[id + try_id]
+                    if try_path != audio_path:
+                        look_ahead += 1
+                        continue
+                    if try_id < 0:
+                        while len(try_text.split()) and try_text.split()[-1] == text.split()[0]:
+                            try_text = " ".join(try_text.split()[:-1])
+                        text = f"{try_text} {text}"
+                        temporal_coordinates[0] = try_coords[0]
+                    else:
+                        while len(text.split()) and text.split()[-1] == try_text.split()[0]:
+                            text = " ".join(text.split()[:-1])
+                        text = f"{text} {try_text}"
+                        temporal_coordinates[1] = try_coords[1]
+                    look_ahead += 1
+
+            segment_start, segment_end = temporal_coordinates
+            text = text.replace("\"", "").replace("'", "")
+            audio = load_wave(audio_path, segment_start, segment_end, sample_rate=self.sample_rate)
+            audio = whisper.pad_or_trim(audio.flatten())
+            mel = whisper.log_mel_spectrogram(audio)
+
+            text_ids = [*self.tokenizer.sot_sequence_including_notimestamps] + self.tokenizer.encode(text)
+            labels = text_ids[1:] + [self.tokenizer.eot]
+
+            np.savez_compressed(npz_path,
+                                input_ids=mel.astype(np.float32),
+                                labels=np.array(labels, dtype=np.int32),
+                                dec_input_ids=np.array(text_ids, dtype=np.int32))
+        else:
+            data = np.load(npz_path)
+            mel = data["input_ids"]
+            labels = data["labels"].tolist()
+            text_ids = data["dec_input_ids"].tolist()
+
+        return {
+            "input_ids": mel,
+            "labels": labels,
+            "dec_input_ids": text_ids
+        }
+
+    def __getitem_old__(self, id):
         extend_condition = lambda filename:int("".join(ch for ch in str(filename)[:-4] if ch.isnumeric())) < 24
         audio_path, temporal_coordinates, text = self.audio_info_list[id]
 
