@@ -14,7 +14,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
 
     best_val_loss = float('inf')  # Set initial best loss to infinity
     best_model_wts = None
-    save_path = "mlm_teacher.pth"
+    save_path = "mlm_model.pth"
 
     model.to(device)
     for epoch in range(num_epochs):
@@ -79,7 +79,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
         # Save the best model weights after training
         if best_model_wts is not None:
             torch.save(best_model_wts, save_path)
-            print(f"Best model saved to {save_path}")
+            print(f"Best model (Val Loss: {best_val_loss:.4f}) saved to {save_path}")
 
     wandb.finish()
 
