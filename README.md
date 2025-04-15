@@ -5,15 +5,15 @@ This repository contains the code and procedures used to develop an automatic sp
 ##  Contents
 
 - [Installation](#️installation)
-- [Notebooks for Exploration](#-notebooks-for-exploration)
+- [Notebooks for Exploration](#notebooks-for-exploration)
   - [artificial_conversations.ipynb](#1-artificial_conversationsipynb)
   - [decoding_strategies.ipynb](#2-decoding_strategiesipynb)
   - [quasi_tracheostomy.ipynb](#3-quasi_tracheostomyipynb)
-- [Reproducing the Experiments](#-reproducing-the-experiments)
+- [Reproducing the Experiments](#reproducing-the-experiments)
   - [Regular Speech](#regular-speech)
   - [Quasi-Tracheostomy Speech](#quasi-tracheostomy-speech)
   - [Patient's Speech](#patients-speech)
-- [Training the MLM](#-training-the-mlm)
+- [Training the MLM](#training-the-mlm)
 
 ## Installation
 
