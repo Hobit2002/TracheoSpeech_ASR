@@ -12,67 +12,30 @@ from whisper_config import *
 from whisper_datasets import *
 from torch.utils.checkpoint import checkpoint
 import requests
-from augmentations import mixstyle
 from io import BytesIO
-from asr.mlm_teacher import BiLSTMModel
+from mlm_teacher import BiLSTMModel
 import torch.nn.functional as F
 import random
 
 # Different models, different devices
-
-
-
-def load_model_from_url(url, checkpoint_dir="artifacts/checkpoint"):
-    """
-    Load a PyTorch model checkpoint from a URL, checking for a local copy first.
-
-    Args:
-        url (str): The URL of the checkpoint file.
-        checkpoint_dir (str): Directory where checkpoints are stored locally.
-
-    Returns:
-        dict: Loaded checkpoint dictionary.
-    """
-    # Ensure the checkpoint directory exists
-    os.makedirs(checkpoint_dir, exist_ok=True)
-
-    # Extract the filename from the URL
-    filename = url.split("/")[-1]
-    local_path = os.path.join(checkpoint_dir, filename)
-
-    # Check if the file already exists locally
-    if os.path.exists(local_path):
-        print(f"Checkpoint found locally at {local_path}. Loading...")
-        checkpoint = torch.load(local_path)
-    else:
-        # Download the file from the URL
-        print(f"Downloading checkpoint from {url}...")
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an error if the request fails
-
-        # Save the checkpoint locally
-        with open(local_path, "wb") as f:
-            f.write(response.content)
-        print(f"Checkpoint saved to {local_path}.")
-
-        # Load the checkpoint
-        checkpoint = torch.load(local_path)
-
-    return checkpoint
 
 class WhisperModelModule(LightningModule):
     
     def __init__(self, cfg:GeneralConfig, lang="cs", train_dataset=[], eval_dataset=[]) -> None:
         super().__init__()
         self.options = whisper.DecodingOptions(language=lang, without_timestamps=True)
-        self.model = whisper.load_model(self.cfg.model_name)
         self.cfg = cfg
+        self.model = whisper.load_model(self.cfg.model_name)
         # Prepare tokenizer
         self.tokenizer = whisper.tokenizer.get_tokenizer(True, language="cs", task=self.options.task)
         # Prepare devices
         if self.cfg.model_name != "tiny":
             if DEVICE == "cpu" or torch.cuda.device_count() < 2: 
-                print("You need at least 2 GPUs to run the model of size",self.cfg.model_name)
+                print("You will probably need at least 2 GPUs to run the model of size:",self.cfg.model_name)
+                if DEVICE == "cpu":
+                    self.device0 = torch.device("cpu")
+                    self.device1 = torch.device("cpu")
+            else:
                 self.device0 = torch.device("cuda:1")
                 self.device1 = torch.device("cuda:0")
 
@@ -90,7 +53,7 @@ class WhisperModelModule(LightningModule):
         # Loading whisper model
         # For Whisper training:
         if self.cfg.whisper_checkpoint: 
-            checkpoint = torch.load(self.cfg.whisper_checkpoint)
+            checkpoint = torch.load("artifacts/checkpoint/" + self.cfg.whisper_checkpoint + ".ckpt", weights_only=True, map_location=torch.device(DEVICE))
             state_dict = checkpoint['state_dict']
             new_state_dict = {}
             for k,v in state_dict.items(): new_state_dict[k.replace("model.","")] = v
@@ -104,7 +67,7 @@ class WhisperModelModule(LightningModule):
         # Load soft-labelling LSTM
         if self.cfg.soft_targets:
             self.lstm_teacher = BiLSTMModel(self.cfg.vocab_size, self.cfg.embedding_dim, self.tokenizer)
-            self.lstm_teacher.load_state_dict(torch.load(os.path.join(os.getcwd(),"soft_target_lstm_l6_data_large.pth")))
+            self.lstm_teacher.load_state_dict(torch.load(os.path.join(os.getcwd(),"mlm_model.pth"), weights_only=True, map_location=torch.device(DEVICE)))
             self.kd_loss= nn.KLDivLoss(log_target=True, reduction="none")
             self.lstm_teacher.eval()
             if self.cfg.model_name != "tiny": self.lstm_teacher.to(self.device1)
@@ -151,11 +114,15 @@ class WhisperModelModule(LightningModule):
             with torch.no_grad():
                 if self.cfg.model_name != "tiny": out = out.to(self.device1)
                 kd_targets = self.lstm_teacher.get_soft_targets(dec_input_ids, labels, out)
-            
-            if self.cfg.soft_target_whisper:
-                kd_targets = kd_targets + self.cfg.soft_target_whisper_weight * batch["whisper_targets_soft"]
 
-            with torch.amp.autocast("cuda"):
+            if DEVICE == "gpu":
+                autocast_context = torch.amp.autocast("cuda")
+            else:
+                # No autocast on CPU
+                from contextlib import nullcontext
+                autocast_context = nullcontext()
+
+            with autocast_context:
                 y_hat_soft = F.log_softmax(out / self.cfg.kd_temperature, dim=-1)
                 soft_targets = F.log_softmax(kd_targets, dim=-1)
 
@@ -282,7 +249,7 @@ class WhisperModelModule(LightningModule):
 
     def train_dataloader(self, shuffle = True):
         if self.cfg.pretrain_on_cs:
-            dataset = CommonVoiceDataset(self.cfg.pretrain_on_csv,'train.tsv',self.tokenizer) 
+            dataset = CommonVoiceDataset(self.cfg.pretrain_on_cs,'train.tsv',self.tokenizer) 
             self.__train_dataset = dataset
         else: dataset = JasmiSpeechDataset(self.__train_dataset, self.tokenizer, self.cfg.sample_rate)
         return torch.utils.data.DataLoader(dataset,
@@ -292,7 +259,7 @@ class WhisperModelModule(LightningModule):
                           )
 
     def val_dataloader(self):
-        if self.cfg.pretrain_on_cs: dataset = CommonVoiceDataset(self.cfg.pretrain_on_csv,'test.tsv',self.tokenizer)
+        if self.cfg.pretrain_on_cs: dataset = CommonVoiceDataset(self.cfg.pretrain_on_cs,'test.tsv',self.tokenizer)
         else: dataset = JasmiSpeechDataset(self.__eval_dataset, self.tokenizer, self.cfg.sample_rate)
         return torch.utils.data.DataLoader(dataset,
                           batch_size=self.cfg.batch_size,

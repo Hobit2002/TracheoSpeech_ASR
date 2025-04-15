@@ -23,7 +23,7 @@ class GeneralConfig:
   weight_decay = 0.01
   adam_epsilon = 1e-8
   warmup_steps = 11
-  num_worker = 11
+  num_worker = 0#11
   num_train_epochs = 14
   gradient_accumulation_steps = 1
   sample_rate = SAMPLE_RATE
@@ -38,6 +38,7 @@ class BaselineConfig(GeneralConfig):
 
 class AdaptedConfig(GeneralConfig):
   soft_targets = True
+  kd_lambda = 1e-3
 
 # Abstarct Configurations: Dataset to train on
 class RegularSpeechConfig(GeneralConfig):
@@ -77,15 +78,16 @@ class TinyBaselinePatientConfig(TinyConfig, BaselineConfig, PatientSpeechConfig)
   whisper_checkpoint = "tiny_baseline_regular"
 
 class TinyAdaptedRegularConfig(TinyConfig, AdaptedConfig, RegularSpeechConfig):
-  train_name = "tiny_adapated_regular"
+  train_name = "tiny_adapted_regular"
 
 class TinyAdaptedQuasiTracheoConfig(TinyConfig, AdaptedConfig, QuasiTracheoSpeechConfig):
-  train_name = "tiny_adapated_quasi_tracheo"
-  whisper_checkpoint = "tiny_adapated_regular"
+  train_name = "tiny_adapted_quasi_tracheo"
+  whisper_checkpoint = "tiny_adapted_regular"
+  kd_lambda = 5e-2
 
 class TinyAdaptedPatientConfig(TinyConfig, AdaptedConfig, PatientSpeechConfig):
-  train_name = "tiny_adapated_patient"
-  whisper_checkpoint = "tiny_adapated_quasi_tracheo"
+  train_name = "tiny_adapted_patient"
+  whisper_checkpoint = "tiny_adapted_quasi_tracheo"
 
 # Base Configurations
 class BaseBaselineRegularConfig(BaseConfig, BaselineConfig, RegularSpeechConfig):
@@ -101,6 +103,7 @@ class BaseAdaptedRegularConfig(BaseConfig, AdaptedConfig, RegularSpeechConfig):
 class BaseAdaptedQuasiTracheoConfig(BaseConfig, AdaptedConfig, QuasiTracheoSpeechConfig):
   train_name = "base_adapted_quasi_tracheo"
   whisper_checkpoint = "base_adapted_regular"
+  kd_lambda = 5e-2
 
 class BaseAdaptedPatientConfig(BaseConfig, AdaptedConfig, PatientSpeechConfig):
   train_name = "base_adapted_quasi_patient"
@@ -111,11 +114,11 @@ class SmallAdaptedRegularConfig(SmallConfig, BaselineConfig, RegularSpeechConfig
   learning_rate = 3e-5
   train_name = "small_adapted_regular"
 
-class SmallAdaptedQuasiTracheoConfig(SmallConfig, BaselineConfig, PatientSpeechConfig):
+class SmallAdaptedQuasiTracheoConfig(SmallConfig, BaselineConfig, QuasiTracheoSpeechConfig):
   train_name = "small_adapted_quasi_tracheo"
   whisper_checkpoint = "small_adapted_regular"
 
-class SmallAdaptedPatientConfig(SmallConfig, AdaptedConfig, RegularSpeechConfig):
+class SmallAdaptedPatientConfig(SmallConfig, AdaptedConfig, PatientSpeechConfig):
   train_name = "small_adapted_patient_tracheo"
   whisper_checkpoint = "small_adapted_quasi_tracheo"
 

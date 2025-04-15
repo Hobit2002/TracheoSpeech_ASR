@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import whisper, time
 from whisper_config import DEVICE
+if DEVICE == "cpu": torch.backends.mkldnn.enabled = False
 
 class BiLSTMModel(nn.Module):
     def __init__(self, vocab_size, embedding_dim, tokenizer):
@@ -15,6 +16,7 @@ class BiLSTMModel(nn.Module):
         # Embed input tokens
         x = self.embedding(x)
         # Pass through BiLSTM
+        print("Input shape to LSTM:", x.shape)
         output, _ = self.lstm(x)
         batch_size, seq_len, hidden_dim_times_2 = output.shape
         hidden_dim = hidden_dim_times_2 // 2
@@ -60,8 +62,5 @@ class BiLSTMModel(nn.Module):
 
         # Step 5: Handle the special case where labels[n, t] = -100
         soft_targets[labels == -100] = predictions[labels == -100]
-        """for n in range(N):
-            for t in range(T):
-                if labels[n, t] == -100: soft_targets[n, t, :] = predictions[n, t]"""
 
         return soft_targets.detach().clone()
