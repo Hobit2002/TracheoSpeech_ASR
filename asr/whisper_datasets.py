@@ -17,16 +17,12 @@ loaded_audios = {}
 def load_wave(wave_path, segment_start, segment_end, sample_rate:int=16000) -> torch.Tensor:
     global loaded_audios
     if not wave_path in loaded_audios.keys():
-        print("About to call torachaudio.load on path:", wave_path)
         waveform, sr = torchaudio.load(wave_path, normalize=True)
-        print("torachaudio.load successful")
         if sample_rate != sr: waveform = at.Resample(sr, sample_rate)(waveform)
-        print("Resampling successful")
         loaded_audios = {}
         loaded_audios[wave_path] = (waveform, sample_rate)
     else: waveform, sample_rate = loaded_audios[wave_path]
     segment_of_interest = waveform[:, int(segment_start * sample_rate/1000):int(segment_end * sample_rate/1000)]
-    print("Segment of interes sliced")
     return segment_of_interest
 
 
@@ -74,12 +70,8 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
 
             audio = load_wave(audio_path, segment_start, segment_end, sample_rate=self.sample_rate)
 
-            print("Loaded wave")
-
             audio = whisper.pad_or_trim(audio.flatten())
             mel = whisper.log_mel_spectrogram(audio)
-
-            print("Prepared spectrogram")
 
             text_ids = [*self.tokenizer.sot_sequence_including_notimestamps] + self.tokenizer.encode(text)
             labels = text_ids[1:] + [self.tokenizer.eot]
@@ -88,8 +80,6 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
                                 input_ids=mel.detach().numpy().astype(np.float32),
                                 labels=np.array(labels, dtype=np.int32),
                                 dec_input_ids=np.array(text_ids, dtype=np.int32))
-            
-            print("Compressed data")
 
         else:
             data = np.load(npz_path)
@@ -102,58 +92,6 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
             "labels": labels,
             "dec_input_ids": text_ids
         }
-
-    def __getitem_old__(self, id):
-        extend_condition = lambda filename:int("".join(ch for ch in str(filename)[:-4] if ch.isnumeric())) < 24
-        audio_path, temporal_coordinates, text = self.audio_info_list[id]
-
-        # audio
-        pickle_path = os.path.join(os.getcwd(), f"data/pickled/{len(self)}_{id}.pickle")
-        if not os.path.isfile(pickle_path):
-    
-            # Merge the segments if they originated from reading sessions
-            if extend_condition(audio_path):
-                look_ahead = 2
-                while temporal_coordinates[1] - temporal_coordinates[0] < 5000:
-                    try_id = ((-1) ** (look_ahead % 2)) * look_ahead // 2 
-                    try_path, try_coords, try_text = self.audio_info_list[id + try_id]
-                    # Don't merge segments from different sessions
-                    if try_path != audio_path:
-                        look_ahead += 1
-                        continue
-                    # Otherwise merge the segments
-                    if try_id < 0:
-                        while len(try_text.split()) and try_text.split()[-1] == text.split()[0]:
-                            try_text = " ".join(try_text.split()[:-1])
-                        text = f"{try_text} {text}"
-                        temporal_coordinates[0] = try_coords[0]
-                    else:
-                        while len(text.split()) and text.split()[-1] == try_text.split()[0]:
-                            text = " ".join(text.split()[:-1])
-                        text = f"{text} {try_text}"
-                        temporal_coordinates[1] = try_coords[1]
-                    # Increase the lookahead
-                    look_ahead += 1
-
-            segment_start, segment_end = temporal_coordinates
-            text = text.replace("\"","").replace("'","")
-
-            audio = load_wave(audio_path, segment_start, segment_end, sample_rate=self.sample_rate)
-            audio = whisper.pad_or_trim(audio.flatten())
-            mel = whisper.log_mel_spectrogram(audio)
-
-            text = [*self.tokenizer.sot_sequence_including_notimestamps] + self.tokenizer.encode(text)
-            labels = text[1:] + [self.tokenizer.eot]
-            to_return = {
-                "input_ids": mel,
-                "labels": labels,
-                "dec_input_ids": text
-            }
-            with open(pickle_path, 'wb') as store: pickle.dump(to_return, store, protocol=pickle.HIGHEST_PROTOCOL)
-        else: 
-            to_return = pickle.load(open(pickle_path, "rb"))
-
-        return to_return
     
 ### DEFINE THE DATA COLLATOR
 class WhisperDataCollatorWhithPadding:
