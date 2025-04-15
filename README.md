@@ -4,7 +4,7 @@ This repository contains the code and procedures used to develop an automatic sp
 
 ##  Contents
 
-- [Installation](#️-installation)
+- [Installation](#️installation)
 - [Notebooks for Exploration](#-notebooks-for-exploration)
   - [artificial_conversations.ipynb](#1-artificial_conversationsipynb)
   - [decoding_strategies.ipynb](#2-decoding_strategiesipynb)
