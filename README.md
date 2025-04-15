@@ -14,7 +14,6 @@ This repository contains the code and procedures used to develop an automatic sp
   - [Quasi-Tracheostomy Speech](#quasi-tracheostomy-speech)
   - [Patient's Speech](#patients-speech)
 - [Training the MLM](#-training-the-mlm)
-- [Documentation](#-documentation)
 
 ## Installation
 
@@ -61,6 +60,14 @@ This notebook shows how we generated the quasi-tracheostomy speech from the regu
   [https://huggingface.co/pyannote/embedding](https://huggingface.co/pyannote/embedding)
 
 ## Reproducing the Experiments
+
+This section provides instruction on how to reproduce our experiments (although the results will be probably somewhat different because we removed several hundreds of samples from the public dataset that clearly referenced real non-celebrity people).
+
+General remark: in order to run any part of the `adapted` pipeline for a model of any size, you will need MLM teacher model. Unless you trained it yourself, download it with the following command:
+
+```bash
+python download_data.py mlm_model
+```
 
 ### Regular Speech
 
@@ -139,5 +146,16 @@ To train a model directly on the real speech of our tracheostomized patient:
 
 ## Training the MLM
 
-*To be added...*
+To train a masked language model that would later serve as a language teacher for Whisper:
 
+1. **Download the data:**
+   ```bash
+   python download_data.py text_data
+   ```
+   This will download approximately 300 MB of Czech [sentences scrapped from web by Meta](https://metatext.io/datasets-list/czech-language).
+
+2. **Train the MLM model:**
+   Launch training using the following commands:
+   ```bash
+   python mlm/train_lstm.py
+   ```
