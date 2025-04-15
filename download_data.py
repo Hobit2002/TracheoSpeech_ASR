@@ -105,20 +105,22 @@ def main(dataset):
             }
         },
         "mlm_model":{
-            "url": "http://pytlik.pruzor.cz/mlm_model.pth",
+            "url": "http://pytlik.pruzor.cz/models/mlm_model.pth",
             "extract": False,
             "destination": "."
         },
-        "tiny_baseline_regular":{
-
-        },
+        "tiny_baseline_regular":{},
         "tiny_baseline_patient":{},
         "tiny_adapated_regular":{},
         "tiny_adapated_patient":{},
         "base_baseline_regular":{},
         "base_adapted_regular":{},
         "small_adapted_regular":{},
-        "small_adapted_patient":{}
+        "small_adapted_patient":{
+            "url": "http://pytlik.pruzor.cz/models/small_adapted_patient.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        }
     }
 
     dataset_obj = dataset_information[dataset]

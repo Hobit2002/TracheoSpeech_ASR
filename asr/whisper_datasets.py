@@ -17,13 +17,16 @@ loaded_audios = {}
 def load_wave(wave_path, segment_start, segment_end, sample_rate:int=16000) -> torch.Tensor:
     global loaded_audios
     if not wave_path in loaded_audios.keys():
+        print("About to call torachaudio.load on path:", wave_path)
         waveform, sr = torchaudio.load(wave_path, normalize=True)
+        print("torachaudio.load successful")
         if sample_rate != sr: waveform = at.Resample(sr, sample_rate)(waveform)
+        print("Resampling successful")
         loaded_audios = {}
         loaded_audios[wave_path] = (waveform, sample_rate)
     else: waveform, sample_rate = loaded_audios[wave_path]
     segment_of_interest = waveform[:, int(segment_start * sample_rate/1000):int(segment_end * sample_rate/1000)]
-
+    print("Segment of interes sliced")
     return segment_of_interest
 
 
@@ -68,20 +71,29 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
 
             segment_start, segment_end = temporal_coordinates
             text = text.replace("\"", "").replace("'", "")
+
             audio = load_wave(audio_path, segment_start, segment_end, sample_rate=self.sample_rate)
+
+            print("Loaded wave")
+
             audio = whisper.pad_or_trim(audio.flatten())
             mel = whisper.log_mel_spectrogram(audio)
+
+            print("Prepared spectrogram")
 
             text_ids = [*self.tokenizer.sot_sequence_including_notimestamps] + self.tokenizer.encode(text)
             labels = text_ids[1:] + [self.tokenizer.eot]
 
             np.savez_compressed(npz_path,
-                                input_ids=mel.astype(np.float32),
+                                input_ids=mel.detach().numpy().astype(np.float32),
                                 labels=np.array(labels, dtype=np.int32),
                                 dec_input_ids=np.array(text_ids, dtype=np.int32))
+            
+            print("Compressed data")
+
         else:
             data = np.load(npz_path)
-            mel = data["input_ids"]
+            mel = torch.Tensor(data["input_ids"])
             labels = data["labels"].tolist()
             text_ids = data["dec_input_ids"].tolist()
 
@@ -250,16 +262,16 @@ def load_audio_and_annotations():
         with open(transcripts_path_list, newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             for row in reader:
-                _,transcription,session_id,start_time,end_time,split = row
+                _,transcription,_,session_id,start_time,end_time,split = row
                 if split in used_splits:
 
                     # Check text length and audio segment length
-                    if len(transcription) > text_max_length or (end_time - start_time) * sample_rate/1000 > audio_max_sample_length:
-                        if len(transcription) > text_max_length: print(f"Skipping line due to transcription being too long {annotation_path}: {transcription} has {len(transcription)} chars ")
-                        else: print(f"Skipping line due to audio being too long: ({end_time}, {start_time}) - {(end_time - start_time) * sample_rate/1000} frames")
+                    if len(transcription) > text_max_length or (float(end_time) - float(start_time)) * sample_rate/1000 > audio_max_sample_length:
+                        if len(transcription) > text_max_length: print(f"Skipping line due to transcription being too long: {transcription} has {len(transcription)} chars ")
+                        else: print(f"Skipping line due to audio being too long: ({end_time}, {start_time}) - {(float(end_time) - float(start_time)) * sample_rate/1000} frames")
                         continue
 
-                    audio_transcript_pair_list.append((f"{session_id}.mp3", [start_time, end_time], transcription))
+                    audio_transcript_pair_list.append((f"data/TracheoSpeech/sessions/{session_id}.mp3", [float(start_time), float(end_time)], transcription))
         return audio_transcript_pair_list
 
     train_audio_transcript_pair_list = get_audio_file_list(annotations_path, ["train","val"], TEXT_MAX_LENGTH, AUDIO_MAX_LENGTH, SAMPLE_RATE)

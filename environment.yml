@@ -9,7 +9,6 @@ dependencies:
     - numpy
     - torch
     - torchaudio
-    - torchvision
     - librosa
     - pydub
     - soundfile
