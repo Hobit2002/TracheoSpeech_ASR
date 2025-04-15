@@ -23,5 +23,6 @@ data/quasi_tracheo/**
 artifacts/checkpoint/**
 
 tmp_audio_sample.mp3
+tmp_sound.wav
 
 wandb/**
