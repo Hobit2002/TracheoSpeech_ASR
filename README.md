@@ -1,6 +1,8 @@
 # TracheoSpeech_ASR
 
-This repository contains the code and procedures used to develop an automatic speech recognition (ASR) system tailored for a patient with a severe speech impediment. The impairment is due to a permanent tracheal stoma and/or neurological damage.
+This repository contains the code and procedures used to develop an automatic speech recognition (ASR) system tailored for a patient with a severe speech impediment. The impairment is due to a permanent tracheal stoma and/or neurological damage. We achieve near-healthy accuracy for smaller Whisper models and in-domain data.
+
+For detailed introduction to this repository, read the `thesis.pdf` document (the current version is only preliminary).
 
 ##  Contents
 
@@ -33,7 +35,7 @@ This repository contains the code and procedures used to develop an automatic sp
 
 ### 1. `artificial_conversations.ipynb`
 
-This notebook provides an interface to generate artificial conversations and annotate the corresponding recordings. It requires an OpenAI API token. You can generate one at [OpenAI's platform](https://platform.openai.com/docs/overview).
+This notebook provides an interface to generate artificial conversations, our most prevalent way of collecting the data, and annotate the corresponding recordings. It requires an OpenAI API token. You can generate one at [OpenAI's platform](https://platform.openai.com/docs/overview).
 
 ### 2. `decoding_strategies.ipynb`
 
