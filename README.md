@@ -1,5 +1,7 @@
 # TracheoSpeech_ASR
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15225595.svg)](https://zenodo.org/records/15225595)
+
 This repository contains the code and procedures used to develop an automatic speech recognition (ASR) system tailored for a patient with a severe speech impediment. The impairment is due to a permanent tracheal stoma and/or neurological damage. We achieve near-healthy accuracy for smaller Whisper models and in-domain data.
 
 For detailed introduction to this repository, read the [thesis.pdf](thesis.pdf) document (the current version is only preliminary).
