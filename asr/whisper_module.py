@@ -249,7 +249,7 @@ class WhisperModelModule(LightningModule):
 
     def train_dataloader(self, shuffle = True):
         if self.cfg.pretrain_on_cs:
-            dataset = CommonVoiceDataset(self.cfg.pretrain_on_cs,'train.tsv',self.tokenizer) 
+            dataset = CommonVoiceDataset(self.cfg.pretrain_on_cs,'train.tsv',self.tokenizer, simulate_tracheostomy = "quasi_tracheo" in self.cfg.pretrain_on_cs) 
             self.__train_dataset = dataset
         else: dataset = JasmiSpeechDataset(self.__train_dataset, self.tokenizer, self.cfg.sample_rate)
         return torch.utils.data.DataLoader(dataset,
@@ -259,7 +259,7 @@ class WhisperModelModule(LightningModule):
                           )
 
     def val_dataloader(self):
-        if self.cfg.pretrain_on_cs: dataset = CommonVoiceDataset(self.cfg.pretrain_on_cs,'test.tsv',self.tokenizer)
+        if self.cfg.pretrain_on_cs: dataset = CommonVoiceDataset(self.cfg.pretrain_on_cs,'test.tsv',self.tokenizer, simulate_tracheostomy = "quasi_tracheo" in self.cfg.pretrain_on_cs)
         else: dataset = JasmiSpeechDataset(self.__eval_dataset, self.tokenizer, self.cfg.sample_rate)
         return torch.utils.data.DataLoader(dataset,
                           batch_size=self.cfg.batch_size,

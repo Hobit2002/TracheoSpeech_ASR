@@ -220,7 +220,7 @@ def load_audio_and_annotations():
 
 ### DATASET FOR NON-PERIODIC DATA
 class CommonVoiceDataset(torch.utils.data.Dataset):
-    def __init__(self, audio_dir, tsv_name, tokenizer, sample_rate=16000):
+    def __init__(self, audio_dir, tsv_name, tokenizer, sample_rate=16000, simulate_tracheostomy = False):
         """
         Args:
             tsv_path (str): Path to the .tsv file containing metadata.
@@ -231,6 +231,7 @@ class CommonVoiceDataset(torch.utils.data.Dataset):
         self.audio_dir = audio_dir
         self.sample_rate = sample_rate
         self.tokenizer = tokenizer
+        self.simulate_tracheostomy = simulate_tracheostomy
 
     def __len__(self):
         return len(self.data)
@@ -252,7 +253,7 @@ class CommonVoiceDataset(torch.utils.data.Dataset):
         waveform, orig_sample_rate = torchaudio.load(audio_path, normalize=True)
         
         # Pre-process the audio
-        waveform = torch.tensor(insert_silence(librosa.effects.time_stretch(waveform.detach().numpy()[0], rate = 1/4), orig_sample_rate, np.random.randint(7,12), 0.125)).unsqueeze(0).float()
+        if self.simulate_tracheostomy: waveform = torch.tensor(insert_silence(librosa.effects.time_stretch(waveform.detach().numpy()[0], rate = 1/4), orig_sample_rate, np.random.randint(7,12), 0.125)).unsqueeze(0).float()
 
         # Resample if needed
         if orig_sample_rate != self.sample_rate: waveform = at.Resample(orig_sample_rate, self.sample_rate)(waveform)
