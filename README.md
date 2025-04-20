@@ -1,6 +1,13 @@
 # TracheoSpeech_ASR
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15225595.svg)](https://zenodo.org/records/15225595)
+<div style="display: flex; gap: 10px;">
+  <a href="https://zenodo.org/records/15225595">
+    <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.15225595.svg" alt="DOI">
+  </a>
+  <a href="https://colab.research.google.com/github/Hobit2002/TracheoSpeech_ASR/blob/main/decoding_strategies_colab.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab">
+  </a>
+</div>
 
 This repository contains the code and procedures used to develop an automatic speech recognition (ASR) system tailored for a patient with a severe speech impediment. The impairment is due to a permanent tracheal stoma and/or neurological damage. We achieve near-healthy accuracy for smaller Whisper models and in-domain data.
 

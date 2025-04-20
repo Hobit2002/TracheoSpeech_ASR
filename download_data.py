@@ -109,13 +109,66 @@ def main(dataset):
             "extract": False,
             "destination": "."
         },
-        "tiny_baseline_regular":{},
-        "tiny_baseline_patient":{},
-        "tiny_adapated_regular":{},
-        "tiny_adapated_patient":{},
-        "base_baseline_regular":{},
-        "base_adapted_regular":{},
-        "small_adapted_regular":{},
+        "tiny_baseline_regular":{
+            "url": "http://pytlik.pruzor.cz/models/tiny_baseline_regular.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "tiny_baseline_patient":{
+            "url": "http://pytlik.pruzor.cz/models/tiny_baseline_patient.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "tiny_adapted_regular":{
+            "url": "http://pytlik.pruzor.cz/models/tiny_adapted_regular.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "tiny_adapted_quasi_tracheo":{
+            "url": "http://pytlik.pruzor.cz/models/tiny_adapted_quasi_tracheo.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "tiny_adapted_patient":{
+            "url": "http://pytlik.pruzor.cz/models/tiny_adapted_patient.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "base_baseline_regular":{
+            "url": "http://pytlik.pruzor.cz/models/base_baseline_regular.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "base_baseline_patient":{
+            "url": "http://pytlik.pruzor.cz/models/base_baseline_patient.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "base_adapted_regular":{
+            "url": "http://pytlik.pruzor.cz/models/base_adapted_regular.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "base_adapted_quasi_tracheo":{
+            "url": "http://pytlik.pruzor.cz/models/base_adapted_quasi_tracheo.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "base_adapted_patient":{
+            "url": "http://pytlik.pruzor.cz/models/base_adapted_patient.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "small_adapted_regular":{
+            "url": "http://pytlik.pruzor.cz/models/small_adapted_regular.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
+        "small_adapted_quasi_tracheo":{
+            "url": "http://pytlik.pruzor.cz/models/small_adapted_quasi_tracheo.ckpt",
+            "extract": False,
+            "destination": "artifacts/checkpoint"
+        },
         "small_adapted_patient":{
             "url": "http://pytlik.pruzor.cz/models/small_adapted_patient.ckpt",
             "extract": False,
