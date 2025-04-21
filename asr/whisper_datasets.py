@@ -11,6 +11,8 @@ from tqdm import tqdm
 from augmentations import insert_silence
 from pydub import AudioSegment
 
+torchaudio.set_audio_backend("sox_io")
+
 loaded_audios = {}
 
 
