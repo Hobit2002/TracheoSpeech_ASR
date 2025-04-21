@@ -35,6 +35,7 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
         self.sample_rate = sample_rate
         self.tokenizer = tokenizer
         self.debug = False
+        os.makedirs(COMPRESSED_AUDIO_DIR, exist_ok=True)
 
     def __len__(self):
         return len(self.audio_info_list)
