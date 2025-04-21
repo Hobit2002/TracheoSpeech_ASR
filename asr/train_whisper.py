@@ -72,6 +72,10 @@ if __name__ == "__main__":
     # Prepare the data loaders
 
     train_loader, val_loader = model.train_dataloader(), model.val_dataloader()
+    
+    # Loop loaders to precompute the pickled data
+    print("Precomputing training data")
+    for _ in model.train_dataloader(shuffle=False):pass
 
     # Train model
     trainer = Trainer(

@@ -24,7 +24,7 @@ class GeneralConfig:
   weight_decay = 0.01
   adam_epsilon = 1e-8
   warmup_steps = 11
-  num_worker = 0#11
+  num_worker = 11
   num_train_epochs = 14
   gradient_accumulation_steps = 1
   sample_rate = SAMPLE_RATE

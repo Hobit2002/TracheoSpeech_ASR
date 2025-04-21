@@ -50,8 +50,14 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
             if extend_condition(audio_path):
                 look_ahead = 2
                 while temporal_coordinates[1] - temporal_coordinates[0] < 5000:
-                    try_id = ((-1) ** (look_ahead % 2)) * look_ahead // 2 
-                    try_path, try_coords, try_text = self.audio_info_list[id + try_id]
+                    try_id = ((-1) ** (look_ahead % 2)) * look_ahead // 2
+                    try: 
+                        try_path, try_coords, try_text = self.audio_info_list[id + try_id]
+                    except IndexError:
+                        print("Length:", len(self))
+                        print("ID:",id)
+                        print("Try id:",try_id)
+                        raise IndexError
                     if try_path != audio_path:
                         look_ahead += 1
                         continue
