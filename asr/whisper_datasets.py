@@ -41,7 +41,8 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, id):
         extend_condition = lambda filename: int("".join(ch for ch in str(filename)[:-4] if ch.isnumeric())) < 24
-        audio_path, temporal_coordinates, text = os.path.join(os.getcwd(),self.audio_info_list[id])
+        audio_path, temporal_coordinates, text = self.audio_info_list[id]
+        audio_path = os.path.join(os.getcwd(),audio_path)
 
         npz_path = os.path.join(os.getcwd(), f"data/compressed/{len(self)}_{id}.npz")
         if not os.path.isfile(npz_path):
