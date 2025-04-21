@@ -79,12 +79,13 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
             labels = text_ids[1:] + [self.tokenizer.eot]
 
             np.savez_compressed(npz_path,
-                                input_ids=mel.detach().numpy().astype(np.float32),
-                                labels=np.array(labels, dtype=np.int32),
-                                dec_input_ids=np.array(text_ids, dtype=np.int32))
+                                input_ids=mel.detach().numpy(),
+                                labels=np.array(labels),
+                                dec_input_ids=np.array(text_ids))
 
         else:
             data = np.load(npz_path)
+            print("Loaded mel spectrogram: ", data["input_ids"])
             mel = torch.Tensor(data["input_ids"])
             labels = data["labels"].tolist()
             text_ids = data["dec_input_ids"].tolist()
