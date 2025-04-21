@@ -53,7 +53,7 @@ class WhisperModelModule(LightningModule):
         # Loading whisper model
         # For Whisper training:
         if self.cfg.whisper_checkpoint: 
-            checkpoint = torch.load("artifacts/checkpoint/" + self.cfg.whisper_checkpoint + ".ckpt", weights_only=True, map_location=torch.device(DEVICE))
+            checkpoint = torch.load("artifacts/checkpoint/" + self.cfg.whisper_checkpoint + ".ckpt", weights_only=True, map_location=torch.device("cpu" if DEVICE == "cpu" else "cuda"))
             state_dict = checkpoint['state_dict']
             new_state_dict = {}
             for k,v in state_dict.items(): new_state_dict[k.replace("model.","")] = v
@@ -67,7 +67,7 @@ class WhisperModelModule(LightningModule):
         # Load soft-labelling LSTM
         if self.cfg.soft_targets:
             self.lstm_teacher = BiLSTMModel(self.cfg.vocab_size, self.cfg.embedding_dim, self.tokenizer)
-            self.lstm_teacher.load_state_dict(torch.load(os.path.join(os.getcwd(),"mlm_model.pth"), weights_only=True, map_location=torch.device(DEVICE)))
+            self.lstm_teacher.load_state_dict(torch.load(os.path.join(os.getcwd(),"mlm_model.pth"), weights_only=True, map_location=torch.device("cpu" if DEVICE == "cpu" else "cuda")))
             self.kd_loss= nn.KLDivLoss(log_target=True, reduction="none")
             self.lstm_teacher.eval()
             if self.cfg.model_name != "tiny": self.lstm_teacher.to(self.device1)
