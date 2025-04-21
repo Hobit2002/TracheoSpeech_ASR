@@ -85,8 +85,13 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
 
         else:
             data = np.load(npz_path)
-            print("Loaded mel spectrogram: ", data["input_ids"])
-            mel = torch.Tensor(data["input_ids"])
+            try:
+                mel = torch.Tensor(data["input_ids"])
+            # If the compressed file is corrupted, remove it
+            except Exception as e:
+                if "zlib.error" not in str(e): raise e
+                os.remove(npz_path)
+                return self[id]
             labels = data["labels"].tolist()
             text_ids = data["dec_input_ids"].tolist()
 
