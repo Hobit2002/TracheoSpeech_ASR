@@ -11,6 +11,7 @@ dependencies:
   - debugpy=1.8.11
   - decorator=5.1.1
   - executing=0.8.3
+  - ffmpeg=7.0.1
   - ipykernel=6.29.5
   - ipython=8.30.0
   - jedi=0.19.2

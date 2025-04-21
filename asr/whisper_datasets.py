@@ -11,15 +11,13 @@ from tqdm import tqdm
 from augmentations import insert_silence
 from pydub import AudioSegment
 
-torchaudio.set_audio_backend("sox_io")
-
 loaded_audios = {}
 
 
 def load_wave(wave_path, segment_start, segment_end, sample_rate:int=16000) -> torch.Tensor:
     global loaded_audios
     if not wave_path in loaded_audios.keys():
-        waveform, sr = torchaudio.load(wave_path, normalize=True)
+        waveform, sr = torchaudio.load(wave_path, normalize=True, format="mp3")
         if sample_rate != sr: waveform = at.Resample(sr, sample_rate)(waveform)
         loaded_audios = {}
         loaded_audios[wave_path] = (waveform, sample_rate)
