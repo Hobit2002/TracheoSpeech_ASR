@@ -1,6 +1,7 @@
 ### IMPORT LIBRARIES
 # Public libraries
 from pathlib import Path
+from tqdm import tqdm
 import argparse,multiprocessing,platform, time
 from torch import cuda
 # Pytorch lightning
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     
     # Loop loaders to precompute the pickled data
     print("Precomputing training data")
-    for _ in model.train_dataloader(shuffle=False):pass
+    for _ in tqdm(model.train_dataloader(shuffle=False)):pass
 
     # Train model
     trainer = Trainer(
