@@ -90,7 +90,7 @@ class JasmiSpeechDataset(torch.utils.data.Dataset):
             # If the compressed file is corrupted, remove it
             except Exception as e:
                 print(e)
-                #if "zlib.error" not in str(e): raise e
+                if "Error -3 while decompressing data:" not in str(e): raise e
                 os.remove(npz_path)
                 return self[id]
             labels = data["labels"].tolist()
