@@ -16,7 +16,6 @@ class BiLSTMModel(nn.Module):
         # Embed input tokens
         x = self.embedding(x)
         # Pass through BiLSTM
-        print("Input shape to LSTM:", x.shape)
         output, _ = self.lstm(x)
         batch_size, seq_len, hidden_dim_times_2 = output.shape
         hidden_dim = hidden_dim_times_2 // 2
