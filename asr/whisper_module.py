@@ -35,6 +35,10 @@ class WhisperModelModule(LightningModule):
                 if DEVICE == "cpu":
                     self.device0 = torch.device("cpu")
                     self.device1 = torch.device("cpu")
+                else:
+                    self.device0 = torch.device("cuda")
+                    self.device1 = torch.device("cuda")
+
             else:
                 self.device0 = torch.device("cuda:1")
                 self.device1 = torch.device("cuda:0")
