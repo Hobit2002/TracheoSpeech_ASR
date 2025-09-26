@@ -89,9 +89,9 @@ def main(dataset):
             "extract": True,
             "destination":{
                 "clips":"data/regular_speech",
-                "dev.txt":"data/regular_speech",
-                "test.txt":"data/regular_speech",
-                "train.txt":"data/regular_speech"
+                "dev.tsv":"data/regular_speech",
+                "test.tsv":"data/regular_speech",
+                "train.tsv":"data/regular_speech"
             }
         },
         "quasi_tracheo":{
@@ -99,9 +99,9 @@ def main(dataset):
             "extract": True,
             "destination":{
                 "clips":"data/quasi_tracheo",
-                "dev.txt":"data/quasi_tracheo",
-                "test.txt":"data/quasi_tracheo",
-                "train.txt":"data/quasi_tracheo"
+                "dev.tsv":"data/quasi_tracheo",
+                "test.tsv":"data/quasi_tracheo",
+                "train.tsv":"data/quasi_tracheo"
             }
         },
         "mlm_model":{
