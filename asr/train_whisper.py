@@ -32,8 +32,8 @@ if __name__ == "__main__":
         "tiny_adapted_patient":TinyAdaptedPatientConfig, "base_baseline_regular":BaseBaselineRegularConfig,
         "base_baseline_patient":BaseBaselinePatientConfig, "base_adapted_regular":BaseAdaptedRegularConfig,
         "base_adapted_quasi_tracheo":BaseAdaptedQuasiTracheoConfig,"base_adapted_patient": BaseAdaptedPatientConfig,
-        "small_adapted_regular": SmallAdaptedRegularConfig, "small_adapted_quasi_tracheo":SmallAdaptedQuasiTracheoConfig,
-        "small_adapted_patient":SmallAdaptedPatientConfig
+        "base_adapted_patient_device":BaseAdaptedPatientDeviceConfig,"small_adapted_regular": SmallAdaptedRegularConfig,
+        "small_adapted_quasi_tracheo":SmallAdaptedQuasiTracheoConfig,"small_adapted_patient":SmallAdaptedPatientConfig
 
     }
 

@@ -19,7 +19,7 @@ CHECKPOINT_OUTPUT_DIR = "artifacts"
 WANDB_PROJECT = "TracheoSpeech_ASR"
 
 ### TRAINING CONFIGURATIONS
-# Abstarct Configurations
+# Abstract Configurations
 class GeneralConfig:
   weight_decay = 0.01
   adam_epsilon = 1e-8
@@ -32,6 +32,16 @@ class GeneralConfig:
   vocab_size = 51865
   embedding_dim = 512
   kd_temperature = 2.
+  # Catastrophic-forgetting mitigation
+  # ... by KD from the old model
+  kl_regularization = False
+  kl_reg_lambda = 1e-2
+  # ... by freezing the first encoder layers
+  freeze_encoder_convs = False
+  freeze_n_encoder_blocks = 0
+  # ... prompt tuning
+  prompt_tuning = False
+  prompt_lr = 1e-2
 
 # Abstarct Configurations: Baseline vs Adapted
 class BaselineConfig(GeneralConfig):
@@ -40,6 +50,14 @@ class BaselineConfig(GeneralConfig):
 class AdaptedConfig(GeneralConfig):
   soft_targets = True
   kd_lambda = 1e-3
+
+class AdaptedPatientDeviceConfig(GeneralConfig):
+  soft_targets = False
+  kl_regularization = True
+  num_train_epochs = 1
+  freeze_encoder_convs = True
+  freeze_n_encoder_blocks = 0
+  prompt_tuning = True
 
 # Abstarct Configurations: Dataset to train on
 class RegularSpeechConfig(GeneralConfig):
@@ -110,6 +128,11 @@ class BaseAdaptedPatientConfig(BaseConfig, AdaptedConfig, PatientSpeechConfig):
   train_name = "base_adapted_quasi_patient"
   whisper_checkpoint = "base_adapted_quasi_tracheo"
 
+class BaseAdaptedPatientDeviceConfig(BaseConfig, AdaptedPatientDeviceConfig, PatientSpeechConfig):
+  train_name = "base_adapted_patient_device"
+  whisper_checkpoint = "base_adapted_patient"
+  learning_rate = 1e-5
+
 # Small Configurations
 class SmallAdaptedRegularConfig(SmallConfig, BaselineConfig, RegularSpeechConfig):
   learning_rate = 3e-5
@@ -122,6 +145,5 @@ class SmallAdaptedQuasiTracheoConfig(SmallConfig, BaselineConfig, QuasiTracheoSp
 class SmallAdaptedPatientConfig(SmallConfig, AdaptedConfig, PatientSpeechConfig):
   train_name = "small_adapted_patient_tracheo"
   whisper_checkpoint = "small_adapted_quasi_tracheo"
-
 
 
