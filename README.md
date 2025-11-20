@@ -9,7 +9,7 @@
   </a>
 </div>
 
-This repository contains the code and procedures used to develop an automatic speech recognition (ASR) system tailored for a patient with a severe speech impediment. The impairment is due to a permanent tracheal stoma and/or neurological damage. We achieve near-healthy accuracy for smaller Whisper models and in-domain data.
+This repository contains the code and procedures used to develop an automatic speech recognition (ASR) system tailored for a patient with a severe speech impediment. The impairment is due to a permanent tracheal stoma and/or neurological damage. We achieve near-healthy accuracy for smaller Whisper models and in-domain data (0.35 WER for Whisper base when teacher-forcing).
 
 For detailed introduction to this repository, read the [thesis.pdf](thesis.pdf) document.
 
